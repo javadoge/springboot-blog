@@ -1,0 +1,105 @@
+#******   project   config   ******#
+server:
+  port: 18002
+  undertow:
+    io-threads: 2
+    worker-threads: 200
+    buffer-size: 1024
+    buffers-per-region: 1024
+    direct-buffers: true
+    accesslog:
+      enabled: false
+      
+spring:
+
+  main:
+    banner-mode: "off"
+    
+  devtools:
+    restart:
+      enabled: true
+    exclude: static/**,public/**,templates/**
+    
+  output:
+    ansi:
+      enabled: detect
+    
+  thymeleaf:
+    check-template: false
+    check-template-location: false
+    cache: false
+    
+  resources:
+    chain:
+      strategy:
+        content:
+          enabled: true
+          paths: /**
+          
+  datasource: 
+    druid:
+      driver-class-name: com.mysql.jdbc.Driver
+      type: com.alibaba.druid.pool.DruidDataSource
+      url: jdbc:mysql:// # 这里需要自行修改数据库源
+      username: # 这里需要自行修改数据库用户名
+      password: # 这里需要自行修改数据库密码
+      initial-size: 1 # 初始化时建立物理连接的个数。
+      min-idle: 1 # 最小连接池数量。
+      max-active: 200 # 最大连接池数量。
+      max-wait: 10000 # 单位毫秒，获取连接时最大等待时间。配置了maxWait之后，缺省启用公平锁，并发效率会有所下降，如果需要可以通过配置useUnfairLock属性为true使用非公平锁。
+      validation-query: SELECT 1 # 检测连接是否有效的sql，要求是一个查询语句。如果validationQuery为null，testOnBorrow、testOnReturn、testWhileIdle都不会启作用。
+      validation-query-timeout: 10 # 单位秒，检测连接是否有效的超时时间。底层调用jdbc Statement对象的void setQueryTimeout(int seconds)方法。
+      test-on-borrow: false # 申请连接时执行validationQuery检测连接是否有效，true会降低性能。
+      test-on-return: false # 归还连接时执行validationQuery检测连接是否有效，true会降低性能。
+      test-while-idle: true # 建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。
+      time-between-eviction-runs-millis: 60000 # 单位毫秒。1、Destroy线程会检测连接的间隔时间，如果连接空闲时间大于等于minEvictableIdleTimeMillis则关闭物理连接。 2、testWhileIdle的判断依据。
+      min-evictable-idle-time-millis: 300000 # 单位毫秒。配置一个连接在池中最小生存的时间。
+      # max-evictable-idle-time-millis: # 解决mysql 8小时问题。
+      use-global-dataSource-stat: true # 合并多个DruidDataSource的监控数据。
+      filters: stat,wall,log4j
+      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000  # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+      
+  redis:
+    database: 0
+    password:
+    pool.max-idle: 100
+    pool.min-idle: 0
+    pool.max-active: 100
+    pool.max-wait: -1
+    sentinel.master: mymaster # name of redis server
+    sentinel.nodes:    # 这里需要自行修改redis sentinels源，deliminated list of sentinels
+      
+      
+#******     log   config      ******#
+logging:
+  config: classpath:logback-blog.xml
+  
+#******    jasypt   config    ******#
+jasypt:
+  encryptor:
+    password:  # 如果有用到jasypt，那就自行配置
+    
+#******   mybatis    config   ******#    
+mybatis:
+  #type-aliases-package: com.example.domain.model
+  #type-handlers-package: com.javadoge.blog.mapper
+  configuration:
+    callSettersOnNulls: true # 显示结果集空字段
+    cacheEnabled: true # 使全局的映射器启用或禁用缓存
+    lazyLoadingEnabled: true # 全局启用或禁用延迟加载。当禁用时，所有关联对象都会即时加载。
+    aggressiveLazyLoading: true # 当启用时，有延迟加载属性的对象在被调用时将会完全加载任意属性。否则，每种属性将会按需要加载。
+    autoMappingBehavior: PARTIAL # 指定 MyBatis 如何自动映射 数据基表的列 NONE：不隐射　PARTIAL:部分  FULL:全部
+    defaultExecutorType: SIMPLE # 这是默认的执行类型  （SIMPLE: 简单； REUSE: 执行器可能重复使用prepared statements语句；BATCH: 执行器可以重复执行语句和批量更新）
+    mapUnderscoreToCamelCase: true # 开启驼峰转换
+    jdbcTypeForNull: NULL # 设置但JDBC类型为空时,某些驱动程序 要指定值,default:OTHER，插入空值时不需要指定类型 
+    defaultStatementTimeout: 15 # 这是以秒为单位的全局sql超时时间设置,当超出了设置的超时时间时,会抛出SQLTimeoutException
+  mapper-locations: classpath:mybatis/mapper/*.xml
+  
+#******   pagehelper config   ******#
+pagehelper:
+  helperDialect: mysql
+  reasonable: true # 分页合理化参数，默认值为false。当该参数设置为 true 时，pageNum<=0 时会查询第一页， pageNum>pages（超过总数时），会查询最后一页。默认false 时，直接根据参数进行查询。
+  supportMethodsArguments: true # 支持通过 Mapper 接口参数来传递分页参数，默认值false，分页插件会从查询方法的参数值中，自动根据上面 params 配置的字段中取值，查找到合适的值时就会自动分页。
+
+
+
